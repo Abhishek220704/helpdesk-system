@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+<p>Welcome, <strong>{{ session['username'] }}</strong> (Role: {{ role }})</p>
+
+<div class="mb-3">
+  <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Refresh</a>
+  <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">Raise New Ticket</a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row text-center mb-4">
+  <div class="col-md-4">
+    <div class="card border-primary">
+      <div class="card-body">
+        <h5 class="card-title">Open</h5>
+        <p class="card-text fs-4">{{ stats.get('Open', 0) }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-warning">
+      <div class="card-body">
+        <h5 class="card-title">In Progress</h5>
+        <p class="card-text fs-4">{{ stats.get('In Progress', 0) }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-success">
+      <div class="card-body">
+        <h5 class="card-title">Closed</h5>
+        <p class="card-text fs-4">{{ stats.get('Closed', 0) }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket Table -->
+<h4>Your Tickets</h4>
+<table class="table table-bordered">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Priority</th>
+      <th>Status</th>
+      {% if role == 'admin' %}<th>Action</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for ticket in tickets %}
+    <tr>
+      <td>{{ ticket[0] }}</td>
+      <td>{{ ticket[1] }}</td>
+      <td>{{ ticket[2] }}</td>
+      <td>{{ ticket[3] }}</td>
+      <td>{{ ticket[4] }}</td>
+      <td>{{ ticket[5] }}</td>
+      {% if role == 'admin' %}
+      <td><a href="{{ url_for('update_ticket', ticket_id=ticket[0]) }}" class="btn btn-sm btn-warning">Update</a></td>
+      {% endif %}
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="7" class="text-center">No tickets found</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
